@@ -1,0 +1,14 @@
+body {
+  background-color: #121212; /* fundo escuro */
+  color: #eee; /* texto claro */
+}
+
+.sidebar {
+  background-color: #1f2937; /* cinza escuro */
+  height: 100vh;
+}
+
+.nav-link:hover {
+  background-color: #24da2d !important; /* azul suave */
+  color: white !important;
+}
