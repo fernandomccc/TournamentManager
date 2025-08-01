@@ -73,7 +73,10 @@
             text-decoration: none;
         }
 
-        /* Cards mais altos e estreitos */
+        .cards-row {
+            gap: 2rem;
+        }
+
         .card-custom {
             max-width: 360px;
             height: 280px;
@@ -81,11 +84,19 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
         }
 
-        .card-custom .card-body {
+        .card-custom:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 86, 179, 0.4);
+        }
+
+        .card-body {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
@@ -94,74 +105,30 @@
             padding: 1.5rem;
         }
 
-        .card-custom .btn {
-            align-self: center;
-            width: 140px;
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-        }
-
         .card-title {
             font-weight: 700;
         }
 
-        /* Espaçamento entre os cards */
-        .cards-row {
-            gap: 2rem;
+        .card-bottom-accent {
+            height: 10px;
+            background: linear-gradient(90deg, #007bff, #00c6ff);
         }
 
-        .btn-primary {
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            /* tom mais escuro de azul */
-            box-shadow: 0 8px 20px rgba(0, 86, 179, 0.6);
-            transform: scale(1.05);
-            z-index: 10;
-        }
-
-        /* Opcional: efeito de brilho animado */
-        .btn-primary::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.4), transparent 70%);
-            transform: translateX(-100%) translateY(-100%) rotate(45deg);
-            transition: transform 0.7s ease;
-            pointer-events: none;
-            border-radius: 50%;
-            opacity: 0;
-        }
-
-        .btn-primary:hover::before {
-            transform: translateX(100%) translateY(100%) rotate(45deg);
-            opacity: 1;
+        a.card-link {
+            text-decoration: none;
+            color: inherit;
         }
     </style>
 </head>
 
 <body class="bg-light">
-
     <!-- Navbar -->
     <nav class="navbar bg-body-tertiary border-bottom shadow-sm py-3 position-relative">
         <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
-
-            <!-- Marca -->
             <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="{{ url_for('static', filename='logo-navbar1.png') }}" alt="Tournament Manager" height="100" width="100"
-                    class="me-2" />
+                <!-- <img src="{{ url_for('static', filename='logo-navbar1.png') }}" alt="Tournament Manager" height="200" width="200" class="me-2" /> -->
                 <span class="visually-hidden">Tournament Manager</span>
             </a>
-
-
-            <!-- Menus -->
             <ul class="nav position-absolute top-50 start-50 translate-middle" style="width: max-content;">
                 <li class="nav-item">
                     <a class="nav-link" href="#"><i class="bi bi-house-door"></i> Home</a>
@@ -176,43 +143,83 @@
                     <a class="nav-link" href="#"><i class="bi bi-bar-chart-line"></i> Rankings</a>
                 </li>
             </ul>
-
-            <!-- Sair -->
             <a href="{{ url_for('logout') }}" class="logout-btn">
                 <i class="bi bi-box-arrow-right"></i> Sair
             </a>
-
         </div>
     </nav>
 
-    <!-- Conteúdo dos cards -->
+    <!-- Cards -->
     <div class="container py-5 d-flex justify-content-center">
         <div class="row cards-row justify-content-center">
 
+            <!-- Card Grupos com Modal -->
             <div class="col-auto">
-                <div class="card card-custom">
+                <div class="card card-custom" data-bs-toggle="modal" data-bs-target="#modalGrupo">
                     <div class="card-body">
                         <h5 class="card-title mb-3">Campeonato em Grupos</h5>
                         <p class="card-text text-muted">
                             As equipes se enfrentam dentro dos grupos, e os melhores avançam ao mata-mata.
                         </p>
                     </div>
-                    <a href="{{ url_for('grupos_form') }}" class="btn btn-primary">Selecionar</a>
+                    <div class="card-bottom-accent"></div>
                 </div>
             </div>
 
+            <!-- Card Eliminatória Dupla -->
             <div class="col-auto">
-                <div class="card card-custom">
-                    <div class="card-body">
-                        <h5 class="card-title mb-3">Eliminatória Dupla</h5>
-                        <p class="card-text text-muted">
-                            Formato onde uma equipe precisa perder duas vezes para ser eliminada.
-                        </p>
+                <a href="{{ url_for('eliminatoria_form') }}" class="card-link">
+                    <div class="card card-custom">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Eliminatória Dupla</h5>
+                            <p class="card-text text-muted">
+                                Formato onde uma equipe precisa perder duas vezes para ser eliminada.
+                            </p>
+                        </div>
+                        <div class="card-bottom-accent"></div>
                     </div>
-                    <a href="{{ url_for('eliminatoria_form') }}" class="btn btn-primary">Selecionar</a>
-                </div>
+                </a>
             </div>
 
+        </div>
+    </div>
+
+    <!-- Modal para Criar Campeonato em Grupos -->
+    <div class="modal fade" id="modalGrupo" tabindex="-1" aria-labelledby="modalGrupoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" action="{{ url_for('criar_campeonato_grupo') }}">
+                <div class="modal-content">
+                    <div class="modal-header flex-column align-items-start">
+                        <div class="w-100 d-flex justify-content-between align-items-center">
+                            <h5 class="modal-title" id="modalGrupoLabel">Novo Campeonato de Grupos</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Fechar"></button>
+                        </div>
+                        <div class="card-bottom-accent w-100 mt-2"></div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="total_equipes" class="form-label">Total de Equipes</label>
+                            <input type="number" class="form-control" id="total_equipes" name="total_equipes" required
+                                min="2">
+                        </div>
+                        <div class="mb-3">
+                            <label for="equipes_por_grupo" class="form-label">Equipes por Grupo</label>
+                            <input type="number" class="form-control" id="equipes_por_grupo" name="equipes_por_grupo"
+                                required min="1">
+                        </div>
+                        <div class="mb-3">
+                            <label for="classificados_por_grupo" class="form-label">Classificados por Grupo</label>
+                            <input type="number" class="form-control" id="classificados_por_grupo"
+                                name="classificados_por_grupo" required min="1">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Iniciar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 
