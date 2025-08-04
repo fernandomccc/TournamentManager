@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Grupos do Campeonato</title>
+</head>
+<body>
+  <h1>Grupos do Campeonato</h1>
+  {% for grupo_num, grupo in enumerate(grupos, start=1) %}
+    <h2>Grupo {{ grupo_num }}</h2>
+    <ul>
+      {% for equipe in grupo %}
+        <li>{{ equipe }}</li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+</body>
+</html>

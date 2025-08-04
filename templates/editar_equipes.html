@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Editar Nomes das Equipes</title>
+</head>
+<body>
+  <h1>Editar Nomes das Equipes</h1>
+  <form method="POST">
+    {% for i in range(total) %}
+      <label>Equipe {{ i + 1 }}: <input type="text" name="equipe_{{ i }}" required></label><br>
+    {% endfor %}
+    <br>
+    <button type="submit">Salvar e Montar Grupos</button>
+  </form>
+</body>
+</html>
